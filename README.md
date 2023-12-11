@@ -1,1 +1,1 @@
-# kielerprojectmanagement
+# Kieler Project Management App
