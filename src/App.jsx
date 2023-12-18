@@ -6,6 +6,7 @@ import Create from './pages/create/Create'
 import Login from './pages/login/Login'
 import Signup from './pages/signup/Signup'
 import Projekt from './pages/projekt/Projekt'
+import Navbar from './components/Navbar'
 
 function App() {
   
@@ -15,6 +16,7 @@ function App() {
    <div className='App'>
    <BrowserRouter>
     <div className="container">
+      <Navbar/>
       <Routes>
         <Route path='/' element={<Dashboard/>}/>
         <Route path='/create' element={<Create/>}/>
