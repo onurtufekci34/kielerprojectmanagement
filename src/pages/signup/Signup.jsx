@@ -8,10 +8,41 @@ export default function Signup() {
   const [displayName,setDisplayName] = useState('')
   const [thumbnail,setThumbnail] = useState(null)
 
+  const [thumbnailError,setThumbnailError] = useState(null)
+
+  const handleChange = (e) => {
+    setThumbnail(null)
+    let selected = e.target.files[0];
+
+
+    if(!selected){
+      setThumbnailError('Please select a picture file');
+      return;
+    }
+
+
+    if (!selected.type.includes('image')){
+      setThumbnailError('Please select a picture file');
+      return;
+    }
+
+    setThumbnailError(null)
+    setThumbnail(selected)
+
+  }
+
+  const handleSubmit = (e)=>{
+    e.preventDefault()
+
+    if(email !=='' && password!=='' && displayName!=='' && thumbnail !==null){
+            console.log(email,password,displayName,thumbnail)
+    }
+  }
+
 
 
   return (
-    <form className='auth-form'>
+    <form className='auth-form' onSubmit={handleSubmit}>
     <h2>Signup Page</h2>
     <label>
       <span>Email:</span>
@@ -27,7 +58,8 @@ export default function Signup() {
     </label>
     <label>
       <span>Profile Photo:</span>
-      <input type="file" required />
+      <input type="file" required  onChange={handleChange}/>
+      {thumbnailError && <div className='error'>{thumbnailError}</div>}
     </label>
     <button className='btn'>Signup</button>
   </form>
