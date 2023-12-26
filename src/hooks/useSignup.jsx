@@ -1,59 +1,51 @@
+import { useState } from "react";
+import { auth, storage } from "../firebase/config";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useAuthContext } from "./useAuthContext";
 
+export const useSignup = () => {
+  const [error, setError] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const { dispatch } = useAuthContext();
 
-import { useState } from "react"
-import {auth,storage} from '../firebase/config'
-import {createUserWithEmailAndPassword,updateProfile } from 'firebase/auth'
-import {ref,uploadBytes,getDownloadURL} from 'firebase/storage'
-import {useAuthContext} from './useAuthContext'
+  const signup = async (email, password, userName, thumbnail) => {
+    setError(null);
+    setIsPending(true);
 
-export const useSignup=()=>{
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      //console.log(response.user);
 
-    const [error,setError]=useState(null)
-    const [isPending,setIsPending]=useState(false)
-    const {dispatch}=useAuthContext();
+      if (!response) {
+        throw new Error("Membership process could not be completed");
+      }
 
-    const signup=async (email,password,userName,thumbnail)=>{
-        setError(null)
-        setIsPending(true)
+      const filePath = `thumbnails/${response.user.uid}/${thumbnail.name}`;
+      const storageRef = ref(storage, filePath);
+      await uploadBytes(storageRef, thumbnail);
 
-        try {
+      const imgUrl = await getDownloadURL(storageRef);
 
-            const response=await createUserWithEmailAndPassword(auth,email,password)
-            //console.log(response.user);
+      updateProfile(response.user, {
+        displayName: userName,
+        photoURL: imgUrl,
+      });
 
-            if(!response){
-                throw new Error('Üyelik işlemi gerçekleşemedi')
-            }
+      dispatch({ type: "LOGIN", payload: response.user });
 
-            const filePath = `thumbnails/${response.user.uid}/${thumbnail.name}`
-            const storageRef = ref(storage,filePath)
-            await uploadBytes(storageRef,thumbnail)
-
-            const imgUrl = await getDownloadURL(storageRef)
-
-            updateProfile(response.user,{
-                displayName:userName,
-                photoUrl:imgUrl
-            })
-
-            dispatch({type:'LOGIN',payload:response.user})
-
-
-                setIsPending(false)
-                setError(null)
-            
-        } catch (error) {
-                console.log(error.message);
-                setError(error.message);
-                setIsPending(false)
-        }
-
-
+      setIsPending(false);
+      setError(null);
+    } catch (error) {
+      console.log(error.message);
+      setError(error.message);
+      setIsPending(false);
     }
+  };
 
-
-   
-
-    return {error,isPending,signup}
-
-}
+  return { error, isPending, signup };
+};
