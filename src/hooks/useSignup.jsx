@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { auth, storage } from "../firebase/config";
+import { auth, storage,db } from "../firebase/config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuthContext } from "./useAuthContext";
+import {setDoc,doc} from 'firebase/firestore'
 
 export const useSignup = () => {
   const [error, setError] = useState(null);
@@ -35,6 +36,13 @@ export const useSignup = () => {
         displayName: userName,
         photoURL: imgUrl,
       });
+
+      const docRef = doc(db,'users',response.user.uid)
+      await setDoc(docRef,{
+        online:true,
+        usersName:userName,
+        fotoUrl:imgUrl
+      })
 
       dispatch({ type: "LOGIN", payload: response.user });
 
