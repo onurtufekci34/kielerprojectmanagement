@@ -1,43 +1,36 @@
-
-
-import {useState } from "react";
-import {auth} from '../firebase/config';
+import { useState } from "react";
+import { auth, db } from "../firebase/config";
 import { signOut } from "firebase/auth";
-import {useAuthContext} from './useAuthContext'
+import { useAuthContext } from "./useAuthContext";
+import { doc, updateDoc } from "firebase/firestore";
 
-export const useLogout=()=>{
+export const useLogout = () => {
+  const [error, setError] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const { dispatch, user } = useAuthContext();
 
-    const [error,setError]=useState(null)
-    const [isPending,setIsPending]=useState(false)
-    const {dispatch}=useAuthContext();
+  const logout = async () => {
+    setError(null);
+    setIsPending(true);
 
-    const logout=async ()=>{
+    try {
+      const { uid } = user;
+      await updateDoc(doc(db, "users", uid), {
+        online: false,
+      });
 
-        setError(null)
-        setIsPending(true)
+      await signOut(auth);
 
-        try {
+      dispatch({ type: "LOGOUT" });
 
-            await signOut(auth)
-
-            dispatch({type:'LOGOUT'})
-
-                setIsPending(false)
-                setError(null)
-            
-
-
-            
-        } catch (error) {
-
-                console.log(error);
-                setError(error.message)
-                setIsPending(false)
-        }
+      setIsPending(false);
+      setError(null);
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+      setIsPending(false);
     }
+  };
 
-
-
-    return {logout,error,isPending}
-}
-
+  return { logout, error, isPending };
+};
