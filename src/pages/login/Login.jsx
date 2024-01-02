@@ -1,5 +1,6 @@
 import './Login.css'
 import {useState} from 'react'
+import {useLogin} from '../../hooks/useLogin'
 
 
 
@@ -11,9 +12,11 @@ export default function Login() {
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
 
+  const {error,isPending,login} = useLogin();
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(email, password)
+    login(email,password)
    
     
   }
@@ -31,7 +34,9 @@ export default function Login() {
       <input type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} />
     </label>
     
-    <button className="btn">Login</button>
+    {!isPending && <button type='submit' className="btn">Login</button>}
+    {isPending && <button className='loading-btn'>Loading...</button>}
+    {error && <div className='error'>{error}</div>}
   </form>
   )
 }
