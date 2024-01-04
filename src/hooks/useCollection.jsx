@@ -7,11 +7,13 @@ export const useCollection=(koleksiyon,_q,_ob)=>{
 
     const [documents,setDocuments]=useState(null)
     const [error,setError]=useState(null)
+    const [isPending, setIsPending] = useState(false)
 
     const q=useRef(_q).current
     const ob=useRef(_ob).current
 
     useEffect(()=>{
+        setIsPending(true)
         let ref=collection(db,koleksiyon)
 
         if(q){
@@ -32,14 +34,16 @@ export const useCollection=(koleksiyon,_q,_ob)=>{
 
             setDocuments(dizi)
             setError(null)
+            setIsPending(false)
         },(error)=>{
             console.log(error.message);
             setError('Data Could Not Be Accessed')
+            setIsPending(false)
         })
 
         return ()=>unsub()
     },[koleksiyon,q,ob])
 
 
-    return {documents,error}
+    return {documents,error,isPending}
 }

@@ -9,6 +9,7 @@ import Signup from './pages/signup/Signup'
 import Projekt from './pages/projekt/Projekt'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import OnlineUsers from './components/OnlineUsers'
 
 function App() {
   
@@ -30,6 +31,7 @@ function App() {
          <Route path='/signup' element={!user ? <Signup/> : <Navigate to='/'/>}/>
        </Routes>
      </div>
+     {user && <OnlineUsers/>}
  
     </BrowserRouter>
    )}
