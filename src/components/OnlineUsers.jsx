@@ -8,7 +8,7 @@ import './OnlineUsers.css'
 export default function OnlineUsers() {
   const { isPending, error, documents } = useCollection('users')
 
-  console.log(documents);
+  //console.log(documents);
   return (
     <div className="user-list">
       <h2>Users List</h2>
@@ -16,7 +16,8 @@ export default function OnlineUsers() {
       {error && <div>{error}</div>}
       {documents && documents.map(u => (
         <div key={u.id} className="user-list-item">
-          <span>{u.userName}</span>
+          {u.online  && <span className='online-user'></span>}
+          <span>{u.usersName}</span>
           <Avatar src={u.fotoUrl} />
         </div>
       ))}
