@@ -1,5 +1,6 @@
 import './Create.css'
 import { useState } from 'react'
+import Select from 'react-select'
 
 export default function Create() {
 
@@ -9,9 +10,16 @@ export default function Create() {
   const [category,setCategory]=useState('')
   const [projectUser,setProjectUser]=useState([])
 
+
+  const categories = [
+    {value:'desktop', label:'Desktop App'},
+    {value:'web', label:'Web App'},
+    {value:'mobile', label:'Mobile App'}
+  ]
+
   const handleSubmit=(e)=>{
     e.preventDefault();
-    console.log(name,details,date);
+    console.log(name,details,date,category);
   }
 
   return (
@@ -38,6 +46,7 @@ export default function Create() {
 
         <label>
           <span>Category:</span>
+          <Select placeholder="Select" options={categories} onChange={(option) => setCategory(option)}/>
         </label>
 
         <label>
