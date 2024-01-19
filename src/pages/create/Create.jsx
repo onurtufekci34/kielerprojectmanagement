@@ -1,6 +1,7 @@
 import './Create.css'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import Select from 'react-select'
+import {useCollection} from '../../hooks/useCollection'
 
 export default function Create() {
 
@@ -8,7 +9,8 @@ export default function Create() {
   const [details,setDetails]=useState('')
   const [date,setDate]=useState('')
   const [category,setCategory]=useState('')
-  const [projectUser,setProjectUser]=useState([])
+  const [projectUsers,setProjectUsers]=useState([])
+  const [user,setUser] = useState([])
 
 
   const categories = [
@@ -17,10 +19,23 @@ export default function Create() {
     {value:'mobile', label:'Mobile App'}
   ]
 
+  const {documents} = useCollection('users')
+  //console.log(documents)
+
   const handleSubmit=(e)=>{
     e.preventDefault();
-    console.log(name,details,date,category);
+    console.log(name,details,date,category,projectUsers);
   }
+
+  useEffect(()=>{
+    if(documents){
+      const options = documents.map(user=>{
+        return {value:user,label:user.usersName}
+      })
+
+      setUser(options)
+    }
+  },[documents])
 
   return (
     <div className='create-form'>
@@ -51,6 +66,7 @@ export default function Create() {
 
         <label>
           <span>Project Users:</span>
+          <Select placeholder='Select Project User' options={user} onChange={(option) => setProjectUsers(option)} isMulti/>
         </label>
 
         <button className='btn'>Add Project</button>
