@@ -11,6 +11,7 @@ export default function Create() {
   const [category,setCategory]=useState('')
   const [projectUsers,setProjectUsers]=useState([])
   const [user,setUser] = useState([])
+  const [formError,setFormError] = useState(null)
 
 
   const categories = [
@@ -24,6 +25,18 @@ export default function Create() {
 
   const handleSubmit=(e)=>{
     e.preventDefault();
+    setFormError(null)
+
+    if(!category){
+      setFormError('Please select a category')
+      return
+    }
+
+    if(!projectUsers.length<1){
+      setFormError('Please select a user')
+      return
+    }
+    
     console.log(name,details,date,category,projectUsers);
   }
 
@@ -70,6 +83,7 @@ export default function Create() {
         </label>
 
         <button className='btn'>Add Project</button>
+        {formError && <div className='error'>{formError}</div>}
       </form>
     </div>
   )
