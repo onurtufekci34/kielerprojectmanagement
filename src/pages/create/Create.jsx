@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import { useCollection } from "../../hooks/useCollection";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useFirestore } from "../../hooks/useFirestore";
+import { useNavigate } from "react-router-dom";
 
 export default function Create() {
   const [name, setName] = useState("");
@@ -15,6 +17,9 @@ export default function Create() {
 
   const { user } = useAuthContext();
 
+  const { addDocument, response } = useFirestore("projects");
+  const navigate = useNavigate();
+
   const categories = [
     { value: "desktop", label: "Desktop App" },
     { value: "web", label: "Web App" },
@@ -24,7 +29,7 @@ export default function Create() {
   const { documents } = useCollection("users");
   //console.log(documents)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
 
@@ -62,7 +67,11 @@ export default function Create() {
       projectUsersList,
     };
 
-    console.log(newProject);
+    await addDocument(newProject);
+
+    if (!response.error) {
+      navigate("/");
+    }
   };
 
   useEffect(() => {
